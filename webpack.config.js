@@ -1,7 +1,8 @@
 const path = require('path');
 const HtmlPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+// const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 
 module.exports = {
   entry: {
@@ -25,21 +26,21 @@ module.exports = {
     rules: [
       {
         test: /\.html$/,
-        loader: 'html-loader'
+        loader: 'html-loader',
+        options: {
+          attributes: true
+        }
       },
       {
-        test: /\.css$/i,
-        use: [{
-          loader: MiniCssExtractPlugin.loader
-        }, 'css-loader']
-      },
-      {
-        test: /\.s[ac]ss$/i,
-        use: [{
-          loader: MiniCssExtractPlugin.loader
-        },
-          'css-loader',
-          'sass-loader'
+        test: /\.s?css$/i,
+        use: [
+          "style-loader",
+          // { loader: MiniCssExtractPlugin.loader },
+          {
+            loader: "css-loader",
+            options: { importLoaders: 1 },
+          },
+          "sass-loader",
         ]
       },
       {
@@ -53,14 +54,18 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        loader: 'url-loader'
       }
     ]
   },
   plugins: [
-    new HtmlPlugin(),
-    new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin({
-      filename: 'bundle.css'
-    })
-  ]
+    new HtmlPlugin({
+      template: path.join(__dirname, './src/assets/main.html')
+    }),
+    // new MiniCssExtractPlugin()
+  ],
+   devtool: "source-map"
 }
